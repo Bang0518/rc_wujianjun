@@ -20,29 +20,46 @@
 - **失败兜底**：外部系统长期不可用时进入死信，避免无限重试放大故障
 - **可观测**：投递状态、重试次数、失败原因可查
 
+### 技术栈
+
+TypeScript 全栈，npm workspaces 单仓多包：
+
+- **backend**：Fastify（HTTP 接入）+ 轮询 worker（投递/重试）+ better-sqlite3（事务型 outbox）
+- **frontend**：Vite + React（轻量可观测面板）
+- **common**：前后端共享的类型与常量（契约真相源）
+
 ### 目录结构
 
 ```
 .
-├── src/       # 服务核心实现（接入、队列、投递、重试）
-├── cli/       # 命令行工具
-├── configs/   # 配置文件
-├── scripts/   # 构建 / 运行脚本
-├── test/      # 测试
-├── docs/      # 设计文档
-└── memory/    # 作业要求与评分标准（非系统内容）
+├── common/    # @notify/common：前后端共享类型与常量
+├── backend/   # @notify/backend：接入 + 队列 + 投递 + 重试
+│   └── src/{config,db,server,worker}
+├── frontend/  # @notify/frontend：Vite+React 可观测面板
+├── configs/   # 配置文件（yaml）
+├── scripts/   # 运行 / 开发 / 演示脚本
+├── test/      # 端到端黑盒测试（各包单测在 backend/test）
+└── docs/      # 设计文档（design / api / ai-usage）+ 评分标准
 ```
+
+> 设计理念、系统边界、可靠性与取舍详见 [`docs/design.md`](docs/design.md)；
+> API 契约见 [`docs/api.md`](docs/api.md)；AI 使用说明见 [`docs/ai-usage.md`](docs/ai-usage.md)。
 
 ## Quick Start
 
-> 具体命令以最终实现的技术栈为准，以下为标准使用流程。
+### 0. 环境配置
+
+安装 Node.js 18.0+（推荐 20 LTS，仓库含 `.nvmrc`），然后运行 `npm install` 安装依赖。
 
 ### 1. 启动服务
 
 ```bash
-# 按 configs/ 下的配置启动投递服务
-./scripts/start.sh
+./scripts/start.sh   # 检查 Node → 安装依赖 → 构建 → 单进程启动（:8080）
 ```
+
+启动后，浏览器打开 <http://localhost:8080> 即可访问**可观测面板**（同进程托管，提交/列表/详情/手动重试）。
+
+开发模式（前端热更新 + 后端 watch）：`./scripts/dev.sh`（面板在 :5173，API 代理到 :8080）。
 
 ### 2. 提交一个通知请求
 
@@ -59,10 +76,21 @@ curl -X POST http://localhost:8080/notifications \
   }'
 ```
 
-服务立即返回受理结果（如通知 ID），随后异步投递到目标地址并按策略重试。
+服务立即返回受理结果（`202` + 通知 ID），随后异步投递到目标地址并按策略重试。
+重复提交可带 `Idempotency-Key` 请求头去重。
 
 ### 3. 查询投递状态
 
 ```bash
-curl http://localhost:8080/notifications/<id>
+curl http://localhost:8080/notifications/<id>   # 单条状态
+curl http://localhost:8080/stats                # 各状态计数
+```
+
+快速填充演示数据：`./scripts/seed.sh`（需服务已启动）。完整 API 见 [`docs/api.md`](docs/api.md)。
+
+### 4. 构建与测试
+
+```bash
+npm run build   # 构建 common / backend / frontend
+npm test        # vitest：store/retry/delivery/api 单测 + 端到端黑盒
 ```

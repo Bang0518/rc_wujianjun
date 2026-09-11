@@ -1,0 +1,27 @@
+{
+  "name": "notification-delivery-service",
+  "version": "0.1.0",
+  "private": true,
+  "description": "内部通知投递服务（出向 Webhook 网关）",
+  "workspaces": [
+    "common",
+    "backend",
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "npm run build --workspace @notify/common && npm run build --workspace @notify/backend && npm run build --workspace @notify/frontend",
+    "build:server": "npm run build --workspace @notify/common && npm run build --workspace @notify/backend",
+    "dev": "bash scripts/dev.sh",
+    "start": "node backend/dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc -b"
+  },
+  "devDependencies": {
+    "typescript": "5.5.4",
+    "vitest": "2.0.5"
+  }
+}

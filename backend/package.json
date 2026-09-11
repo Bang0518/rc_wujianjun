@@ -1,0 +1,23 @@
+{
+  "name": "@notify/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "start": "node dist/index.js",
+    "dev": "node --watch --experimental-strip-types src/index.ts"
+  },
+  "dependencies": {
+    "@fastify/static": "7.0.4",
+    "@notify/common": "*",
+    "better-sqlite3": "11.3.0",
+    "fastify": "4.28.1",
+    "yaml": "2.5.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "7.6.11",
+    "@types/node": "20.14.15"
+  }
+}

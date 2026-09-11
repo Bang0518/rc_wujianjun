@@ -1,0 +1,21 @@
+# 通知投递服务默认配置
+# 所有字段均可省略，缺省时回落到 common/DEFAULTS。
+# 环境变量 PORT / DB_PATH / CONFIG_PATH 优先级高于本文件。
+
+port: 8080
+dbPath: data/notifications.db
+
+worker:
+  pollIntervalMs: 1000      # 轮询间隔
+  batchSize: 20             # 单 tick 取件上限
+  concurrency: 5            # 并发投递上限（同时也是对外压力上限）
+  visibilityTimeoutMs: 30000 # delivering 记录的可见性超时，须 > delivery.timeoutMs
+
+delivery:
+  timeoutMs: 10000          # 单次投递超时
+  maxAttempts: 8            # 默认最大尝试次数（可被单条请求的 maxAttempts 覆盖）
+
+retry:
+  baseMs: 1000              # 退避基数
+  factor: 2                 # 指数因子
+  capMs: 3600000            # 退避上限（1 小时）：外部长期不可用时把重试压到最坏每小时一次

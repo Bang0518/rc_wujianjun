@@ -1,0 +1,24 @@
+# 配置样例（带说明）。复制为 default.yaml 或用 CONFIG_PATH 指向本文件。
+#
+# 调参直觉：
+# - 吞吐不够：调大 worker.concurrency 与 worker.batchSize。
+# - 外部普遍较慢：调大 delivery.timeoutMs，并相应调大 visibilityTimeoutMs。
+# - 想更快放弃长期不可用的目标：调小 delivery.maxAttempts 或 retry.capMs。
+
+port: 8080
+dbPath: data/notifications.db
+
+worker:
+  pollIntervalMs: 1000
+  batchSize: 20
+  concurrency: 5
+  visibilityTimeoutMs: 30000
+
+delivery:
+  timeoutMs: 10000
+  maxAttempts: 8
+
+retry:
+  baseMs: 1000
+  factor: 2
+  capMs: 3600000
