@@ -39,11 +39,12 @@ TypeScript 全栈，npm workspaces 单仓多包：
 ├── configs/   # 配置文件（yaml）
 ├── scripts/   # 运行 / 开发 / 演示脚本
 ├── test/      # 端到端黑盒测试（各包单测在 backend/test）
-└── docs/      # 设计文档（design / api / ai-usage）+ 评分标准
+└── docs/      # 设计文档（design / api / schema / 接入指南 / ai-usage）+ 评分标准
 ```
 
 > 设计理念、系统边界、可靠性与取舍详见 [`docs/design.md`](docs/design.md)；
-> API 契约见 [`docs/api.md`](docs/api.md)；AI 使用说明见 [`docs/ai-usage.md`](docs/ai-usage.md)。
+> API 契约见 [`docs/api.md`](docs/api.md)；库表设计见 [`docs/schema.md`](docs/schema.md)；
+> 业务方接入见 [`docs/接入指南.md`](docs/接入指南.md)；AI 使用说明见 [`docs/ai-usage.md`](docs/ai-usage.md)。
 
 ## Quick Start
 
